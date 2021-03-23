@@ -6,7 +6,9 @@ This file creates your application.
 """
 import os
 from app import app
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
+from .forms import PropertyForm
+from werkzeug.utils import secure_filename
 
 ###
 # Routing for your application.
@@ -21,13 +23,37 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="Nadrine Simms")
 
-@app.route('/property')
+
+@app.route('/property', methods=['GET', 'POST'])
 def property():
+
+    myForm = PropertyForm()
+
+    if request.method == 'POST':
+        if myForm.validate_on_submit():
+            title = myForm.title.data
+            description = myForm.description.data
+            location = myForm.location.data
+            photo = myForm.photo.data
+            
+            file_name = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            flash('Form filled out successfully')
+
+        flash_errors(PropertyForm)
+    
+    return render_template('property.html', form=myForm)
+
+
+
+
 
 @app.route('/properties')
 def properties():
+
 
 @app.route('/property/<propertyid>')
 def propertyid():
