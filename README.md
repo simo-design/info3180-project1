@@ -1,2 +1,2 @@
 # flask_starter
-Starter code for a new Flask Application
+This is Project 1 for Nadrine Simms. 
