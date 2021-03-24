@@ -10,19 +10,5 @@ class Property(db.Model):
     price = db.Column(db.Float)
     property_type = db.Column(db.String(80))
     location = db.Column(db.String(255))
-#    photo = db.Column(db.String(255))
+    photo = db.Column(db.String(255))
 
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        try:
-            return unicode(self.property_id)  # python 2 support
-        except NameError:
-            return str(self.property_id)  # python 3 support

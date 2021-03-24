@@ -6,6 +6,7 @@ This file creates your application.
 """
 import os
 from app import app
+from app import db
 from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
 from .forms import PropertyForm
 from werkzeug.utils import secure_filename
@@ -46,7 +47,7 @@ def property():
             property_id = str(uuid.uuid4().fields[-1])[:8]
 
         if photo:    
-            file_name = secure_filename(photo.filename)
+            filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         prop =  Property(property_id=property_id, title=title, description=description, no_of_rooms=no_of_rooms, no_of_bathrooms=no_of_bathrooms, price=price, property_type=property_type, location=location, photo=photo.filename)
