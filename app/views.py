@@ -37,13 +37,15 @@ def property():
             description = myForm.description.data
             location = myForm.location.data
             photo = myForm.photo.data
-            
+
+        if photo:    
             file_name = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            flash('Form filled out successfully')
+        flash('Form filled out successfully')
 
         flash_errors(PropertyForm)
+        return redirect(url_for('properties', filename=filename))
     
     return render_template('property.html', form=myForm)
 
