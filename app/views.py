@@ -9,7 +9,9 @@ from app import app
 from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
 from .forms import PropertyForm
 from werkzeug.utils import secure_filename
-
+import psycopg2
+import uuid
+from .models import Property
 ###
 # Routing for your application.
 ###
@@ -35,30 +37,36 @@ def property():
         if myForm.validate_on_submit():
             title = myForm.title.data
             description = myForm.description.data
+            no_of_rooms = myForm.no_of_rooms.data
+            no_of_bathrooms = myForm.no_of_bathrooms.data
+            price = myForm.price.data            
+            property_type = myForm.property_type.data
             location = myForm.location.data
             photo = myForm.photo.data
+            property_id = str(uuid.uuid4().fields[-1])[:8]
 
         if photo:    
             file_name = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+        prop =  Property(property_id=property_id, title=title, description=description, no_of_rooms=no_of_rooms, no_of_bathrooms=no_of_bathrooms, price=price, property_type=property_type, location=location, photo=photo.filename)
+        db.session.add(prop)
+        db.session.commit()
+
         flash('Form filled out successfully')
 
         flash_errors(PropertyForm)
-        return redirect(url_for('properties', filename=filename))
+        return redirect(url_for('properties'))
     
-    return render_template('property.html', form=myForm)
+    return render_template('property.html')
 
 
+#@app.route('/properties')
+#def properties():
 
 
-
-@app.route('/properties')
-def properties():
-
-
-@app.route('/property/<propertyid>')
-def propertyid():
+#@app.route('/property/<propertyid>')
+#def propertyid():
 
 
 
