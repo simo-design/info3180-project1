@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div>
+        <h2>Properties</h2>
+
+        {% for property in property %}
+
+        {%include 'property_view.html'%}
+        <button action="{{ url_for('property.propertyid') }}" class="view-button"> View Property </button>
+
+        {%endfor}
+    </div>
+
+{% endblock %}

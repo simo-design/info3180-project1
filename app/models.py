@@ -2,7 +2,7 @@ from . import db
 import random
 
 class Property(db.Model):
-    property_id = db.Column(db.Integer, primary_key=True)
+    propertyid = db.Column(db.Integer, primary_key=True)
     title =  db.Column(db.String(80))    
     description = db.Column(db.String(255))
     no_of_rooms = db.Column(db.Integer)

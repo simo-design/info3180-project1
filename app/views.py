@@ -7,7 +7,8 @@ This file creates your application.
 import os
 from app import app
 from app import db
-from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory, jsonify
+from flask import SQLAlchemy
 from .forms import PropertyForm
 from werkzeug.utils import secure_filename
 import psycopg2
@@ -44,13 +45,13 @@ def property():
             property_type = myForm.property_type.data
             location = myForm.location.data
             photo = myForm.photo.data
-            property_id = str(uuid.uuid4().fields[-1])[:8]
+            propertyid = str(uuid.uuid4().fields[-1])[:8]
 
         if photo:    
             filename = secure_filename(photo.filename)
             photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        prop =  Property(property_id=property_id, title=title, description=description, no_of_rooms=no_of_rooms, no_of_bathrooms=no_of_bathrooms, price=price, property_type=property_type, location=location, photo=photo.filename)
+        prop =  Property(propertyid=propertyid, title=title, description=description, no_of_rooms=no_of_rooms, no_of_bathrooms=no_of_bathrooms, price=price, property_type=property_type, location=location, photo=photo.filename)
         db.session.add(prop)
         db.session.commit()
 
@@ -59,16 +60,39 @@ def property():
         flash_errors(PropertyForm)
         return redirect(url_for('properties'))
     
-    return render_template('property.html')
+    return render_template('add_property.html')
 
 
-#@app.route('/properties')
-#def properties():
+@app.route('/properties', methods=['GET', 'POST'])
+def properties():
+
+    property_list = []
+
+    property = Property.query.all()
+
+    if request.method == 'POST':
+        for property in property:
+            property_list += [property.photo, property.title, property.location, property.price]
+        return jsonify(properties=property_list)
+  
+    elif request.method == 'GET'
+        return render_template('properties.html', property=property)
+    return redirect(url_for('home'))
 
 
-#@app.route('/property/<propertyid>')
-#def propertyid():
+@app.route('/property/<propertyid>', methods=['GET', 'POST'])
+def propertyid():
+    
+    prop={}
 
+    property = Property.query.filter_by(propertyid).first()
+    if request.method == 'POST':
+        prop={prop.photo, prop.title, prop.description, prop.no_of_rooms, prop.no_of_bathrooms, prop.location, prop.price, prop.property_type}
+        return jsonify(prop)
+    elif request == 'GET' and property:
+        return render_template('property_view.html', property=prop)
+
+    return render_template('properties.html')
 
 
 
